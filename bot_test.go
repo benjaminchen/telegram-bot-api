@@ -59,11 +59,10 @@ func init() {
 
 	if err != nil {
 		fmt.Printf("Can't new bot and get err=%+v\n", err)
+		os.Exit(1)
 	}
 
-	if bot.Me != nil {
-		bot.SetWebhook("")
-	}
+	bot.DelWebhook()
 }
 
 func TestNewBotWithoutToken(t *testing.T) {
