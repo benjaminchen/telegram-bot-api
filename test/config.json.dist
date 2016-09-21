@@ -1,0 +1,7 @@
+{
+    "Token": "your-bot-token",
+    "ChatId": "chat-id",
+    "FromChatId": "from-chat-id",
+    "ForwardMessageId": forward-message-id,
+    "HttpClientTimeout": timeout-seconds
+}
