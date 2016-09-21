@@ -29,7 +29,7 @@ func NewBot(token string, client *http.Client) (bot *Bot, err error) {
 	self, err := bot.GetMe()
 
 	if err != nil {
-		return
+		return &Bot{}, err
 	}
 
 	bot.Me = &self
