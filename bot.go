@@ -139,20 +139,29 @@ func (bot *Bot) GetUpdates(limit int, timeout int) (updates []Update, err error)
 	return
 }
 
-func (bot *Bot) SetWebhook(u string) (res Response, err error) {
+// return Message
+func (bot *Bot) SetWebhook(payload *SetWebhookPayload) (res Response, err error) {
 	uv := url.Values{}
-	uv.Set("url", u)
-	res, err = bot.Request("setWebhook", uv)
+	uv.Set("url", payload.Url)
+	path := payload.CertificateFilePath
 
+	if path == "" {
+		res, err = bot.Request("setWebhook", uv)
+		return
+	}
+
+	res, err = bot.Upload("setWebhook", "certificate", path, uv)
 	return
 }
 
-func (bot *Bot) DelWebhook() (res Response, err error) {
+// return Message
+func (bot *Bot) RemoveWebhook() (res Response, err error) {
 	res, err = bot.Request("setWebhook", url.Values{})
 
 	return
 }
 
+// return User
 func (bot *Bot) GetMe() (me User, err error) {
 	res, err := bot.Request("getMe", nil)
 
@@ -165,6 +174,7 @@ func (bot *Bot) GetMe() (me User, err error) {
 	return
 }
 
+// return Message
 func (bot *Bot) SendMessage(payload *SendMessagePayload) (res Response, err error) {
 	values := payload.BuildQuery()
 	res, err = bot.Request("sendMessage", values)
@@ -172,6 +182,7 @@ func (bot *Bot) SendMessage(payload *SendMessagePayload) (res Response, err erro
 	return
 }
 
+// return Message
 func (bot *Bot) ForwardMessage(payload *ForwardMessagePayload) (res Response, err error) {
 	values := payload.BuildQuery()
 	res, err = bot.Request("forwardMessage", values)

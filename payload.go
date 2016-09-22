@@ -27,6 +27,11 @@ type Payload interface {
 	BuildQuery() (url.Values)
 }
 
+type SetWebhookPayload struct {
+	Url			string
+	CertificateFilePath	string
+}
+
 type SendMessagePayload struct {
 	ChatId			string	`json:"chat_id"`
 	Text			string	`json:"text"`

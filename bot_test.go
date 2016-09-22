@@ -61,8 +61,6 @@ func init() {
 		fmt.Printf("Can't new bot and get err=%+v\n", err)
 		os.Exit(1)
 	}
-
-	bot.DelWebhook()
 }
 
 func TestNewBotWithoutToken(t *testing.T) {
@@ -79,20 +77,41 @@ func TestNewBot(t *testing.T) {
 	}
 }
 
-func TestBot_SetWebhook(t *testing.T) {
-	res, err := bot.SetWebhook("google.com.tw")
-	if !res.Ok {
-		t.Error(fmt.Sprint("Can't set webhook and get err=%+v", err))
-		t.Fail()
-	}
-}
-
-func TestBot_DelWebhook(t *testing.T) {
-	res, err := bot.SetWebhook("")
+func TestBot_RemoveWebhook(t *testing.T) {
+	res, err := bot.RemoveWebhook()
 	if !res.Ok {
 		t.Error(fmt.Sprint("Can't clear webhook and get err=%+v", err))
 		t.Fail()
 	}
+}
+
+func TestBot_SetWebhook(t *testing.T) {
+	payload := &SetWebhookPayload{
+		Url: "https://google.com.tw",
+	}
+
+	res, err := bot.SetWebhook(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Can't set webhook and get err=%+v", err))
+		t.Fail()
+	}
+
+	bot.RemoveWebhook()
+}
+
+func TestBot_SetWebhookWithCertificate(t *testing.T) {
+	payload := &SetWebhookPayload{
+		Url: "google.com.tw",
+		CertificateFilePath: "test/test.cert",
+	}
+
+	res, err := bot.SetWebhook(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Can't set webhook with certificate and get err=%+v", err))
+		t.Fail()
+	}
+
+	bot.RemoveWebhook()
 }
 
 func TestBot_SendMessage(t *testing.T) {
@@ -105,6 +124,21 @@ func TestBot_SendMessage(t *testing.T) {
 
 	if !res.Ok {
 		t.Error(fmt.Sprint("Send message fail and get err=%+v", err))
+		t.Fail()
+	}
+}
+
+func TestBot_SendMessageWithParseMode(t *testing.T) {
+	payload := &SendMessagePayload{
+		ChatId: chatId,
+		Text: "_Test telegram api message. (italic)_ " + time.Now().String(),
+		ParseMode: "Markdown",
+	}
+
+	res, err := bot.SendMessage(payload)
+
+	if !res.Ok {
+		t.Error(fmt.Sprint("Send markdown message fail and get err=%+v", err))
 		t.Fail()
 	}
 }
