@@ -1,13 +1,16 @@
 package tgbot
 
 import (
+	"os"
 	"fmt"
+	"bytes"
 	"errors"
 	"strconv"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"encoding/json"
+	"mime/multipart"
 )
 
 type Bot struct {
@@ -60,6 +63,67 @@ func (bot *Bot) Request(api string, params url.Values) (response Response, err e
 	return
 }
 
+func (bot *Bot) Upload(api string, fileParamName string, filePath string, params url.Values) (response Response, err error) {
+	// read file - start
+	file, err := os.Open(filePath)
+	if err != nil {
+		return
+	}
+
+	fileContents, err := ioutil.ReadAll(file)
+	if err != nil {
+		return
+	}
+
+	fileState, err := file.Stat()
+	if err != nil {
+		return
+	}
+
+	file.Close()
+	// read file - end
+
+	bodyBuf := &bytes.Buffer{}
+	bodyWriter := multipart.NewWriter(bodyBuf)
+
+	fileWriter, err := bodyWriter.CreateFormFile(fileParamName, fileState.Name())
+	if err != nil {
+		return
+	}
+
+	fileWriter.Write(fileContents)
+
+	for key, _ := range params {
+		_ = bodyWriter.WriteField(key, params.Get(key))
+	}
+
+	err = bodyWriter.Close()
+	if err != nil {
+		return
+	}
+
+	res, err := bot.Client.Post(bot.Url + "/" + api, bodyWriter.FormDataContentType(), bodyBuf)
+	if err != nil {
+		return
+	}
+
+	defer res.Body.Close()
+
+	bytes, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		return
+	}
+
+	json.Unmarshal(bytes, &response)
+
+	if !response.Ok || response.ErrorCode != 0 {
+		err = errors.New(fmt.Sprintf("[%+v] %+v", response.ErrorCode, response.Description))
+	}
+
+	return
+}
+
+// return array of Update
 func (bot *Bot) GetUpdates(limit int, timeout int) (updates []Update, err error) {
 	uv := url.Values{}
 	uv.Set("limit", strconv.Itoa(limit))
