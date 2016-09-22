@@ -16,6 +16,7 @@ var (
 	chatId	string
 	fromId	string
 	mId	int
+	photoId	string
 )
 
 type Config struct {
@@ -23,6 +24,7 @@ type Config struct {
 	ChatId			string
 	FromChatId		string
 	ForwardMessageId	int
+	PhotoId			string
 	HttpClientTimeout	int
 }
 
@@ -30,7 +32,6 @@ func init() {
 	var err error
 
 	file, err := os.Open("test/config.json")
-
 	if err != nil {
 		fmt.Printf("Can't open config file and get err=%+v\n", err)
 		os.Exit(1)
@@ -39,7 +40,6 @@ func init() {
 	decoder := json.NewDecoder(file)
 	config := Config{}
 	err = decoder.Decode(&config)
-
 	if err != nil {
 		fmt.Printf("Decode config fail and get err=%+v\n", err)
 		os.Exit(1)
@@ -50,13 +50,14 @@ func init() {
 	fromId = config.FromChatId
 	timeout := config.HttpClientTimeout
 	mId = config.ForwardMessageId
+	photoId = config.PhotoId
+
 
 	client = &http.Client{
 		Timeout: time.Duration(timeout) * time.Second,
 	}
 
 	bot, err = NewBot(token, client)
-
 	if err != nil {
 		fmt.Printf("Can't new bot and get err=%+v\n", err)
 		os.Exit(1)
@@ -65,7 +66,6 @@ func init() {
 
 func TestNewBotWithoutToken(t *testing.T) {
 	_, err := NewBot("", client)
-
 	if err == nil {
 		t.Fail()
 	}
@@ -121,7 +121,6 @@ func TestBot_SendMessage(t *testing.T) {
 	}
 
 	res, err := bot.SendMessage(payload)
-
 	if !res.Ok {
 		t.Error(fmt.Sprint("Send message fail and get err=%+v", err))
 		t.Fail()
@@ -136,7 +135,6 @@ func TestBot_SendMessageWithParseMode(t *testing.T) {
 	}
 
 	res, err := bot.SendMessage(payload)
-
 	if !res.Ok {
 		t.Error(fmt.Sprint("Send markdown message fail and get err=%+v", err))
 		t.Fail()
@@ -145,7 +143,6 @@ func TestBot_SendMessageWithParseMode(t *testing.T) {
 
 func TestBot_GetUpdates(t *testing.T) {
 	_, err := bot.GetUpdates(10, 5)
-
 	if err != nil {
 		t.Error(fmt.Sprint("Get updates fail and get err=%+v", err))
 		t.Fail()
@@ -160,7 +157,32 @@ func TestBot_ForwardMessage(t *testing.T) {
 	}
 
 	res, err := bot.ForwardMessage(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Send message fail and get err=%+v", err))
+		t.Fail()
+	}
+}
 
+func TestBot_SendPhoto(t *testing.T) {
+	payload := &SendPhotoPayload{
+		ChatId: chatId,
+		FilePath: "test/test.gif",
+	}
+
+	res, err := bot.SendPhoto(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Send message fail and get err=%+v", err))
+		t.Fail()
+	}
+}
+
+func TestBot_SendPhotoById(t *testing.T) {
+	payload := &SendPhotoPayload{
+		ChatId: chatId,
+		Photo: photoId,
+	}
+
+	res, err := bot.SendPhoto(payload)
 	if !res.Ok {
 		t.Error(fmt.Sprint("Send message fail and get err=%+v", err))
 		t.Fail()

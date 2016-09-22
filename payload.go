@@ -15,6 +15,9 @@ func payloadToUrlValues(in interface{}) (url.Values) {
 		field := t.Field(i)
 		tag := field.Tag.Get("json")
 		value := v.Field(i).Interface()
+		if tag == "" || tag == "-" {
+			continue
+		}
 		if value != reflect.Zero(field.Type).Interface() {
 			uv.Set(tag, fmt.Sprint(value))
 		}
@@ -57,3 +60,16 @@ func (payload *ForwardMessagePayload) BuildQuery() (url.Values) {
 	return payloadToUrlValues(*payload)
 }
 
+type SendPhotoPayload struct {
+	ChatId			string	`json:"chat_id"`
+	Photo			string	`json:"photo"`
+	Caption			string	`json:"caption"`
+	DisableNotification	bool	`json:"disable_notification"`
+	ReplyToMessageId	int	`json:"reply_to_message_id"`
+	ReplyMarkup		string	`json:"reply_markup"`
+	FilePath		string	`json:"-"`
+}
+
+func (payload *SendPhotoPayload) BuildQuery() (url.Values) {
+	return payloadToUrlValues(*payload)
+}

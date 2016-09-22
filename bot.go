@@ -30,7 +30,6 @@ func NewBot(token string, client *http.Client) (bot *Bot, err error) {
 		Client: client,
 	}
 	self, err := bot.GetMe()
-
 	if err != nil {
 		return &Bot{}, err
 	}
@@ -42,7 +41,6 @@ func NewBot(token string, client *http.Client) (bot *Bot, err error) {
 
 func (bot *Bot) Request(api string, params url.Values) (response Response, err error) {
 	res, err := bot.Client.PostForm(bot.Url + "/" + api, params)
-
 	if err != nil {
 		return
 	}
@@ -55,7 +53,6 @@ func (bot *Bot) Request(api string, params url.Values) (response Response, err e
 	}
 
 	json.Unmarshal(bytes, &response)
-
 	if !response.Ok || response.ErrorCode != 0 {
 		err = errors.New(fmt.Sprintf("[%+v] %+v", response.ErrorCode, response.Description))
 	}
@@ -115,7 +112,6 @@ func (bot *Bot) Upload(api string, fileParamName string, filePath string, params
 	}
 
 	json.Unmarshal(bytes, &response)
-
 	if !response.Ok || response.ErrorCode != 0 {
 		err = errors.New(fmt.Sprintf("[%+v] %+v", response.ErrorCode, response.Description))
 	}
@@ -144,7 +140,6 @@ func (bot *Bot) SetWebhook(payload *SetWebhookPayload) (res Response, err error)
 	uv := url.Values{}
 	uv.Set("url", payload.Url)
 	path := payload.CertificateFilePath
-
 	if path == "" {
 		res, err = bot.Request("setWebhook", uv)
 		return
@@ -164,7 +159,6 @@ func (bot *Bot) RemoveWebhook() (res Response, err error) {
 // return User
 func (bot *Bot) GetMe() (me User, err error) {
 	res, err := bot.Request("getMe", nil)
-
 	if err != nil {
 		return
 	}
@@ -186,6 +180,19 @@ func (bot *Bot) SendMessage(payload *SendMessagePayload) (res Response, err erro
 func (bot *Bot) ForwardMessage(payload *ForwardMessagePayload) (res Response, err error) {
 	values := payload.BuildQuery()
 	res, err = bot.Request("forwardMessage", values)
+
+	return
+}
+
+// return Message
+func (bot *Bot) SendPhoto(payload *SendPhotoPayload) (res Response, err error) {
+	values := payload.BuildQuery()
+	fmt.Println(values)
+	if payload.Photo != "" {
+		res, err = bot.Request("sendPhoto", values)
+	} else {
+		res, err = bot.Upload("sendPhoto", "photo", payload.FilePath, values)
+	}
 
 	return
 }

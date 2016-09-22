@@ -3,5 +3,6 @@
     "ChatId": "chat-id",
     "FromChatId": "from-chat-id",
     "ForwardMessageId": forward-message-id,
+    "PhotoId": "photo-file_id",
     "HttpClientTimeout": timeout-seconds
 }
