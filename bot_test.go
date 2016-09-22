@@ -179,7 +179,7 @@ func TestBot_SendPhoto(t *testing.T) {
 func TestBot_SendPhotoById(t *testing.T) {
 	payload := &SendPhotoPayload{
 		ChatId: chatId,
-		Photo: photoId,
+		PhotoId: photoId,
 	}
 
 	res, err := bot.SendPhoto(payload)

@@ -187,8 +187,7 @@ func (bot *Bot) ForwardMessage(payload *ForwardMessagePayload) (res Response, er
 // return Message
 func (bot *Bot) SendPhoto(payload *SendPhotoPayload) (res Response, err error) {
 	values := payload.BuildQuery()
-	fmt.Println(values)
-	if payload.Photo != "" {
+	if payload.PhotoId != "" {
 		res, err = bot.Request("sendPhoto", values)
 	} else {
 		res, err = bot.Upload("sendPhoto", "photo", payload.FilePath, values)

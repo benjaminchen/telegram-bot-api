@@ -62,7 +62,7 @@ func (payload *ForwardMessagePayload) BuildQuery() (url.Values) {
 
 type SendPhotoPayload struct {
 	ChatId			string	`json:"chat_id"`
-	Photo			string	`json:"photo"`
+	PhotoId			string	`json:"photo"`
 	Caption			string	`json:"caption"`
 	DisableNotification	bool	`json:"disable_notification"`
 	ReplyToMessageId	int	`json:"reply_to_message_id"`
