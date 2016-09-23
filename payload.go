@@ -90,3 +90,17 @@ type SendAudioPayload struct {
 func (payload *SendAudioPayload) BuildQuery() (url.Values) {
 	return payloadToUrlValues(*payload)
 }
+
+type SendDocumentPayload struct {
+	ChatId			string	`json:"chat_id"`
+	DocumentId		string	`json:"document"`
+	Caption			string	`json:"caption"`
+	DisableNotification	int	`json:"disable_notification"`
+	ReplyToMessageId	int	`json:"reply_to_message_id"`
+	ReplyMarkup		string	`json:"reply_markup"`
+	FilePath		string	`json:"-"`
+}
+
+func (payload *SendDocumentPayload) BuildQuery() (url.Values) {
+	return payloadToUrlValues(*payload)
+}

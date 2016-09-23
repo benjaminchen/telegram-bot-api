@@ -206,3 +206,14 @@ func (bot *Bot) SendAudio(payload *SendAudioPayload) (res Response, err error) {
 
 	return
 }
+
+func (bot *Bot) SendDocument(payload *SendDocumentPayload) (res Response, err error) {
+	values := payload.BuildQuery()
+	if payload.DocumentId != "" {
+		res, err = bot.Request("sendDocument", values)
+	} else {
+		res, err = bot.Upload("sendDocument", "document", payload.FilePath, values)
+	}
+
+	return
+}

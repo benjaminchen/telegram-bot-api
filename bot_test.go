@@ -201,3 +201,16 @@ func TestBot_SendAudio(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBot_SendDocument(t *testing.T) {
+	payload := &SendDocumentPayload{
+		ChatId: chatId,
+		FilePath: "test/test.txt",
+	}
+
+	res, err := bot.SendDocument(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Send document fail and get err=%+v", err))
+		t.Fail()
+	}
+}
