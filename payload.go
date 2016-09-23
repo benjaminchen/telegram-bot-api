@@ -73,3 +73,20 @@ type SendPhotoPayload struct {
 func (payload *SendPhotoPayload) BuildQuery() (url.Values) {
 	return payloadToUrlValues(*payload)
 }
+
+type SendAudioPayload struct {
+	ChatId			string	`json:"chat_id"`
+	AudioId			string	`json:"audio"`
+	Caption			string	`json:"caption"`
+	Duration		int	`json:"duration"`
+	Performer		string	`json:"performer"`
+	Title			string	`json:"title"`
+	DisableNotification	int	`json:"disable_notification"`
+	ReplyToMessageId	int	`json:"reply_to_message_id"`
+	ReplyMarkup		string	`json:"reply_markup"`
+	FilePath		string	`json:"-"`
+}
+
+func (payload *SendAudioPayload) BuildQuery() (url.Values) {
+	return payloadToUrlValues(*payload)
+}

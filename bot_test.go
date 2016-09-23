@@ -171,7 +171,7 @@ func TestBot_SendPhoto(t *testing.T) {
 
 	res, err := bot.SendPhoto(payload)
 	if !res.Ok {
-		t.Error(fmt.Sprint("Send message fail and get err=%+v", err))
+		t.Error(fmt.Sprint("Send photo fail and get err=%+v", err))
 		t.Fail()
 	}
 }
@@ -184,7 +184,20 @@ func TestBot_SendPhotoById(t *testing.T) {
 
 	res, err := bot.SendPhoto(payload)
 	if !res.Ok {
-		t.Error(fmt.Sprint("Send message fail and get err=%+v", err))
+		t.Error(fmt.Sprint("Send photo fail and get err=%+v", err))
+		t.Fail()
+	}
+}
+
+func TestBot_SendAudio(t *testing.T) {
+	payload := &SendAudioPayload{
+		ChatId: chatId,
+		FilePath: "test/test.mp3",
+	}
+
+	res, err := bot.SendAudio(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Send audio fail and get err=%+v", err))
 		t.Fail()
 	}
 }

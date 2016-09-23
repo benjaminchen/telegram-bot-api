@@ -195,3 +195,14 @@ func (bot *Bot) SendPhoto(payload *SendPhotoPayload) (res Response, err error) {
 
 	return
 }
+
+func (bot *Bot) SendAudio(payload *SendAudioPayload) (res Response, err error) {
+	values := payload.BuildQuery()
+	if payload.AudioId != "" {
+		res, err = bot.Request("sendAudio", values)
+	} else {
+		res, err = bot.Upload("sendAudio", "audio", payload.FilePath, values)
+	}
+
+	return
+}
