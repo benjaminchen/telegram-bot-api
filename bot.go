@@ -256,3 +256,8 @@ func (bot *Bot) SendContact(payload *SendContactPayload) (res Response, err erro
 	values := payload.BuildQuery()
 	return bot.Request("sendContact", values)
 }
+
+func (bot *Bot) SendChatAction(payload *SendChatActionPayload) (res Response, err error) {
+	values := payload.BuildQuery()
+	return bot.Request("sendChatAction", values)
+}

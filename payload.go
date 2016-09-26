@@ -192,3 +192,12 @@ type SendContactPayload struct {
 func (payload *SendContactPayload) BuildQuery() (url.Values) {
 	return payloadToUrlValues(*payload)
 }
+
+type SendChatActionPayload struct {
+	ChatId		string	`json:"chat_id"`
+	Action		string	`json:"action"`
+}
+
+func (payload *SendChatActionPayload) BuildQuery() (url.Values) {
+	return payloadToUrlValues(*payload)
+}

@@ -297,3 +297,16 @@ func TestBot_SendContact(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBot_SendChatAction(t *testing.T) {
+	payload := &SendChatActionPayload{
+		ChatId: chatId,
+		Action: "typing",
+	}
+
+	res, err := bot.SendChatAction(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Send contact fail and get err=%+v", err))
+		t.Fail()
+	}
+}
