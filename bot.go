@@ -251,3 +251,8 @@ func (bot *Bot) SendVenue(payload *SendVenuePayload) (res Response, err error) {
 	values := payload.BuildQuery()
 	return bot.Request("sendVenue", values)
 }
+
+func (bot *Bot) SendContact(payload *SendContactPayload) (res Response, err error) {
+	values := payload.BuildQuery()
+	return bot.Request("sendContact", values)
+}

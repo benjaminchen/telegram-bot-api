@@ -279,7 +279,21 @@ func TestBot_SendVenue(t *testing.T) {
 
 	res, err := bot.SendVenue(payload)
 	if !res.Ok {
-		t.Error(fmt.Sprint("Send location fail and get err=%+v", err))
+		t.Error(fmt.Sprint("Send venue fail and get err=%+v", err))
+		t.Fail()
+	}
+}
+
+func TestBot_SendContact(t *testing.T) {
+	payload := &SendContactPayload{
+		ChatId: chatId,
+		PhoneNumber: "0912345678",
+		FirstName: "Small",
+	}
+
+	res, err := bot.SendContact(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Send contact fail and get err=%+v", err))
 		t.Fail()
 	}
 }

@@ -178,3 +178,17 @@ type SendVenuePayload struct {
 func (payload *SendVenuePayload) BuildQuery() (url.Values) {
 	return payloadToUrlValues(*payload)
 }
+
+type SendContactPayload struct {
+	ChatId			string	`json:"chat_id"`
+	PhoneNumber		string	`json:"phone_number"`
+	FirstName		string	`json:"first_name"`
+	LastName		string	`json:"last_name"`
+	DisableNotification	bool	`json:"disable_notification"`
+	ReplyToMessageId	int	`json:"reply_to_message_id"`
+	ReplyMarkup		string	`json:"reply_markup"`
+}
+
+func (payload *SendContactPayload) BuildQuery() (url.Values) {
+	return payloadToUrlValues(*payload)
+}
