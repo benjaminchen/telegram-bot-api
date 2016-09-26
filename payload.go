@@ -162,3 +162,19 @@ type SendLocationPayload struct {
 func (payload *SendLocationPayload) BuildQuery() (url.Values) {
 	return payloadToUrlValues(*payload)
 }
+
+type SendVenuePayload struct {
+	ChatId			string	`json:"chat_id"`
+	Latitude		float64	`json:"latitude"`
+	Longitude		float64	`json:"longitude"`
+	Title			string	`json:"title"`
+	Address			string	`json:"address"`
+	FoursquareId		string	`json:"foursquare_id"`
+	DisableNotification	bool	`json:"disable_notification"`
+	ReplyToMessageId	int	`json:"reply_to_message_id"`
+	ReplyMarkup		string	`json:"reply_markup"`
+}
+
+func (payload *SendVenuePayload) BuildQuery() (url.Values) {
+	return payloadToUrlValues(*payload)
+}

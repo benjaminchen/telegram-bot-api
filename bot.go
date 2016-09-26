@@ -250,6 +250,10 @@ func (bot *Bot) SendVoice(payload *SendVoicePayload) (res Response, err error) {
 
 func (bot *Bot) SendLocation(payload *SendLocationPayload) (res Response, err error) {
 	values := payload.BuildQuery()
-
 	return bot.Request("sendLocation", values)
+}
+
+func (bot *Bot) SendVenue(payload *SendVenuePayload) (res Response, err error) {
+	values := payload.BuildQuery()
+	return bot.Request("sendVenue", values)
 }

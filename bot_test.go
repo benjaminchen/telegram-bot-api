@@ -267,3 +267,19 @@ func TestBot_SendLocation(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBot_SendVenue(t *testing.T) {
+	payload := &SendVenuePayload{
+		ChatId: chatId,
+		Latitude: 24.1438237529,
+		Longitude: 120.684804175,
+		Title: "Taichung Park",
+		Address: "No.65, Sec. 1, Shuangshi Rd., North Dist., Taichung City 404, Taiwan",
+	}
+
+	res, err := bot.SendVenue(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Send location fail and get err=%+v", err))
+		t.Fail()
+	}
+}
