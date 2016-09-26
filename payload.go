@@ -134,3 +134,18 @@ type SendVideoPayload struct {
 func (payload *SendVideoPayload) BuildQuery() (url.Values) {
 	return payloadToUrlValues(*payload)
 }
+
+type SendVoicePayload struct {
+	ChatId			string	`json:"chat_id"`
+	FileId			string	`json:"voice"`
+	Caption			string	`json:"caption"`
+	Duration		int	`json:"duration"`
+	DisableNotification	bool	`json:"disable_notification"`
+	ReplyToMessageId	int	`json:"reply_to_message_id"`
+	ReplyMarkup		string	`json:"reply_markup"`
+	FilePath		string	`json:"-"`
+}
+
+func (payload *SendVoicePayload) BuildQuery() (url.Values) {
+	return payloadToUrlValues(*payload)
+}

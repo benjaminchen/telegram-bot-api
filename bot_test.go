@@ -218,7 +218,7 @@ func TestBot_SendDocument(t *testing.T) {
 func TestBot_SendSticker(t *testing.T) {
 	payload := &SendStickerPayload{
 		ChatId: chatId,
-		FilePath: "test/test.gif",
+		FilePath: "test/test.webp",
 	}
 
 	res, err := bot.SendSticker(payload)
@@ -237,6 +237,19 @@ func TestBot_SendVideo(t *testing.T) {
 	res, err := bot.SendVideo(payload)
 	if !res.Ok {
 		t.Error(fmt.Sprint("Send video fail and get err=%+v", err))
+		t.Fail()
+	}
+}
+
+func TestBot_SendVoice(t *testing.T) {
+	payload := &SendVoicePayload{
+		ChatId: chatId,
+		FilePath: "test/test.ogg",
+	}
+
+	res, err := bot.SendVoice(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Send voice fail and get err=%+v", err))
 		t.Fail()
 	}
 }

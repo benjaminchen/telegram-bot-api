@@ -189,6 +189,7 @@ func (bot *Bot) SendPhoto(payload *SendPhotoPayload) (res Response, err error) {
 	return
 }
 
+// support .mp3 file to display
 func (bot *Bot) SendAudio(payload *SendAudioPayload) (res Response, err error) {
 	values := payload.BuildQuery()
 	if payload.FileId != "" {
@@ -211,6 +212,7 @@ func (bot *Bot) SendDocument(payload *SendDocumentPayload) (res Response, err er
 	return
 }
 
+// .webp file
 func (bot *Bot) SendSticker(payload *SendStickerPayload) (res Response, err error) {
 	values := payload.BuildQuery()
 	if payload.FileId != "" {
@@ -222,12 +224,25 @@ func (bot *Bot) SendSticker(payload *SendStickerPayload) (res Response, err erro
 	return
 }
 
+// .mp4 file
 func (bot *Bot) SendVideo(payload *SendVideoPayload) (res Response, err error) {
 	values := payload.BuildQuery()
 	if payload.FileId != "" {
 		res, err = bot.Request("sendVideo", values)
 	} else {
 		res, err = bot.Upload("sendVideo", "video", payload.FilePath, values)
+	}
+
+	return
+}
+
+// .ogg file
+func (bot *Bot) SendVoice(payload *SendVoicePayload) (res Response, err error) {
+	values := payload.BuildQuery()
+	if payload.FileId != "" {
+		res, err = bot.Request("sendVoice", values)
+	} else {
+		res, err = bot.Upload("sendVoice", "voice", payload.FilePath, values)
 	}
 
 	return
