@@ -119,7 +119,6 @@ func (bot *Bot) Upload(api string, fileParamName string, filePath string, params
 	return
 }
 
-// return array of Update
 func (bot *Bot) GetUpdates(limit int, timeout int) (updates []Update, err error) {
 	uv := url.Values{}
 	uv.Set("limit", strconv.Itoa(limit))
@@ -135,7 +134,6 @@ func (bot *Bot) GetUpdates(limit int, timeout int) (updates []Update, err error)
 	return
 }
 
-// return Message
 func (bot *Bot) SetWebhook(payload *SetWebhookPayload) (res Response, err error) {
 	uv := url.Values{}
 	uv.Set("url", payload.Url)
@@ -149,14 +147,12 @@ func (bot *Bot) SetWebhook(payload *SetWebhookPayload) (res Response, err error)
 	return
 }
 
-// return Message
 func (bot *Bot) RemoveWebhook() (res Response, err error) {
 	res, err = bot.Request("setWebhook", url.Values{})
 
 	return
 }
 
-// return User
 func (bot *Bot) GetMe() (me User, err error) {
 	res, err := bot.Request("getMe", nil)
 	if err != nil {
@@ -168,7 +164,6 @@ func (bot *Bot) GetMe() (me User, err error) {
 	return
 }
 
-// return Message
 func (bot *Bot) SendMessage(payload *SendMessagePayload) (res Response, err error) {
 	values := payload.BuildQuery()
 	res, err = bot.Request("sendMessage", values)
@@ -176,7 +171,6 @@ func (bot *Bot) SendMessage(payload *SendMessagePayload) (res Response, err erro
 	return
 }
 
-// return Message
 func (bot *Bot) ForwardMessage(payload *ForwardMessagePayload) (res Response, err error) {
 	values := payload.BuildQuery()
 	res, err = bot.Request("forwardMessage", values)
@@ -184,10 +178,9 @@ func (bot *Bot) ForwardMessage(payload *ForwardMessagePayload) (res Response, er
 	return
 }
 
-// return Message
 func (bot *Bot) SendPhoto(payload *SendPhotoPayload) (res Response, err error) {
 	values := payload.BuildQuery()
-	if payload.PhotoId != "" {
+	if payload.FileId != "" {
 		res, err = bot.Request("sendPhoto", values)
 	} else {
 		res, err = bot.Upload("sendPhoto", "photo", payload.FilePath, values)
@@ -198,7 +191,7 @@ func (bot *Bot) SendPhoto(payload *SendPhotoPayload) (res Response, err error) {
 
 func (bot *Bot) SendAudio(payload *SendAudioPayload) (res Response, err error) {
 	values := payload.BuildQuery()
-	if payload.AudioId != "" {
+	if payload.FileId != "" {
 		res, err = bot.Request("sendAudio", values)
 	} else {
 		res, err = bot.Upload("sendAudio", "audio", payload.FilePath, values)
@@ -209,10 +202,21 @@ func (bot *Bot) SendAudio(payload *SendAudioPayload) (res Response, err error) {
 
 func (bot *Bot) SendDocument(payload *SendDocumentPayload) (res Response, err error) {
 	values := payload.BuildQuery()
-	if payload.DocumentId != "" {
+	if payload.FileId != "" {
 		res, err = bot.Request("sendDocument", values)
 	} else {
 		res, err = bot.Upload("sendDocument", "document", payload.FilePath, values)
+	}
+
+	return
+}
+
+func (bot *Bot) SendSticker(payload *SendStickerPayload) (res Response, err error) {
+	values := payload.BuildQuery()
+	if payload.FileId != "" {
+		res, err = bot.Request("sendSticker", values)
+	} else {
+		res, err = bot.Upload("sendSticker", "sticker", payload.FilePath, values)
 	}
 
 	return

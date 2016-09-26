@@ -179,7 +179,7 @@ func TestBot_SendPhoto(t *testing.T) {
 func TestBot_SendPhotoById(t *testing.T) {
 	payload := &SendPhotoPayload{
 		ChatId: chatId,
-		PhotoId: photoId,
+		FileId: photoId,
 	}
 
 	res, err := bot.SendPhoto(payload)
@@ -211,6 +211,20 @@ func TestBot_SendDocument(t *testing.T) {
 	res, err := bot.SendDocument(payload)
 	if !res.Ok {
 		t.Error(fmt.Sprint("Send document fail and get err=%+v", err))
+		t.Fail()
+	}
+}
+
+func TestBot_SendSticker(t *testing.T) {
+	payload := &SendStickerPayload{
+		ChatId: chatId,
+		FilePath: "test/test.gif",
+	}
+
+	res, err := bot.SendSticker(payload)
+	fmt.Println(string(res.Result))
+	if !res.Ok {
+		t.Error(fmt.Sprint("Send sticker fail and get err=%+v", err))
 		t.Fail()
 	}
 }

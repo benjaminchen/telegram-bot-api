@@ -62,7 +62,7 @@ func (payload *ForwardMessagePayload) BuildQuery() (url.Values) {
 
 type SendPhotoPayload struct {
 	ChatId			string	`json:"chat_id"`
-	PhotoId			string	`json:"photo"`
+	FileId			string	`json:"photo"`
 	Caption			string	`json:"caption"`
 	DisableNotification	bool	`json:"disable_notification"`
 	ReplyToMessageId	int	`json:"reply_to_message_id"`
@@ -76,7 +76,7 @@ func (payload *SendPhotoPayload) BuildQuery() (url.Values) {
 
 type SendAudioPayload struct {
 	ChatId			string	`json:"chat_id"`
-	AudioId			string	`json:"audio"`
+	FileId			string	`json:"audio"`
 	Caption			string	`json:"caption"`
 	Duration		int	`json:"duration"`
 	Performer		string	`json:"performer"`
@@ -93,7 +93,7 @@ func (payload *SendAudioPayload) BuildQuery() (url.Values) {
 
 type SendDocumentPayload struct {
 	ChatId			string	`json:"chat_id"`
-	DocumentId		string	`json:"document"`
+	FileId			string	`json:"document"`
 	Caption			string	`json:"caption"`
 	DisableNotification	int	`json:"disable_notification"`
 	ReplyToMessageId	int	`json:"reply_to_message_id"`
@@ -102,5 +102,18 @@ type SendDocumentPayload struct {
 }
 
 func (payload *SendDocumentPayload) BuildQuery() (url.Values) {
+	return payloadToUrlValues(*payload)
+}
+
+type SendStickerPayload struct  {
+	ChatId			string	`json:"chat_id"`
+	FileId			string	`json:"sticker"`
+	DisableNotification	int	`json:"disable_notification"`
+	ReplyToMessageId	int	`json:"reply_to_message_id"`
+	ReplyMarkup		string	`json:"reply_markup"`
+	FilePath		string	`json:"-"`
+}
+
+func (payload *SendStickerPayload) BuildQuery() (url.Values) {
 	return payloadToUrlValues(*payload)
 }
