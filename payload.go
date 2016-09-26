@@ -149,3 +149,16 @@ type SendVoicePayload struct {
 func (payload *SendVoicePayload) BuildQuery() (url.Values) {
 	return payloadToUrlValues(*payload)
 }
+
+type SendLocationPayload struct {
+	ChatId			string	`json:"chat_id"`
+	Latitude		float64	`json:"latitude"`
+	Longitude		float64	`json:"longitude"`
+	DisableNotification	bool	`json:"disable_notification"`
+	ReplyToMessageId	int	`json:"reply_to_message_id"`
+	ReplyMarkup		string	`json:"reply_markup"`
+}
+
+func (payload *SendLocationPayload) BuildQuery() (url.Values) {
+	return payloadToUrlValues(*payload)
+}

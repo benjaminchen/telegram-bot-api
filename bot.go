@@ -247,3 +247,9 @@ func (bot *Bot) SendVoice(payload *SendVoicePayload) (res Response, err error) {
 
 	return
 }
+
+func (bot *Bot) SendLocation(payload *SendLocationPayload) (res Response, err error) {
+	values := payload.BuildQuery()
+
+	return bot.Request("sendLocation", values)
+}

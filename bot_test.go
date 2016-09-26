@@ -253,3 +253,17 @@ func TestBot_SendVoice(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBot_SendLocation(t *testing.T) {
+	payload := &SendLocationPayload{
+		ChatId: chatId,
+		Latitude: 24.1433333,
+		Longitude: 120.6813889,
+	}
+
+	res, err := bot.SendLocation(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Send location fail and get err=%+v", err))
+		t.Fail()
+	}
+}
