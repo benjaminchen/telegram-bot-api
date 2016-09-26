@@ -221,3 +221,14 @@ func (bot *Bot) SendSticker(payload *SendStickerPayload) (res Response, err erro
 
 	return
 }
+
+func (bot *Bot) SendVideo(payload *SendVideoPayload) (res Response, err error) {
+	values := payload.BuildQuery()
+	if payload.FileId != "" {
+		res, err = bot.Request("sendVideo", values)
+	} else {
+		res, err = bot.Upload("sendVideo", "video", payload.FilePath, values)
+	}
+
+	return
+}

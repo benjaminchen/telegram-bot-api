@@ -117,3 +117,20 @@ type SendStickerPayload struct  {
 func (payload *SendStickerPayload) BuildQuery() (url.Values) {
 	return payloadToUrlValues(*payload)
 }
+
+type SendVideoPayload struct {
+	ChatId			string	`json:"chat_id"`
+	FileId			string	`json:"video"`
+	Duration		int	`json:"duration"`
+	Width			int	`json:"width"`
+	Height			int	`json:"height"`
+	Caption			string	`json:"caption"`
+	DisableNotification	bool	`json:"disable_notification"`
+	ReplyToMessageId	int	`json:"reply_to_message_id"`
+	ReplyMarkup		string	`json:"reply_markup"`
+	FilePath		string	`json:"-"`
+}
+
+func (payload *SendVideoPayload) BuildQuery() (url.Values) {
+	return payloadToUrlValues(*payload)
+}

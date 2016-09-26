@@ -222,9 +222,21 @@ func TestBot_SendSticker(t *testing.T) {
 	}
 
 	res, err := bot.SendSticker(payload)
-	fmt.Println(string(res.Result))
 	if !res.Ok {
 		t.Error(fmt.Sprint("Send sticker fail and get err=%+v", err))
+		t.Fail()
+	}
+}
+
+func TestBot_SendVideo(t *testing.T) {
+	payload := &SendVideoPayload{
+		ChatId: chatId,
+		FilePath: "test/test.mp4",
+	}
+
+	res, err := bot.SendVideo(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Send video fail and get err=%+v", err))
 		t.Fail()
 	}
 }
