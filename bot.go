@@ -148,9 +148,7 @@ func (bot *Bot) SetWebhook(payload *SetWebhookPayload) (res Response, err error)
 }
 
 func (bot *Bot) RemoveWebhook() (res Response, err error) {
-	res, err = bot.Request("setWebhook", url.Values{})
-
-	return
+	return bot.Request("setWebhook", url.Values{})
 }
 
 func (bot *Bot) GetMe() (me User, err error) {
@@ -166,16 +164,12 @@ func (bot *Bot) GetMe() (me User, err error) {
 
 func (bot *Bot) SendMessage(payload *SendMessagePayload) (res Response, err error) {
 	values := payload.BuildQuery()
-	res, err = bot.Request("sendMessage", values)
-
-	return
+	return bot.Request("sendMessage", values)
 }
 
 func (bot *Bot) ForwardMessage(payload *ForwardMessagePayload) (res Response, err error) {
 	values := payload.BuildQuery()
-	res, err = bot.Request("forwardMessage", values)
-
-	return
+	return bot.Request("forwardMessage", values)
 }
 
 func (bot *Bot) SendPhoto(payload *SendPhotoPayload) (res Response, err error) {
