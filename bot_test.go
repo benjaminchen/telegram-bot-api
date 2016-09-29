@@ -324,3 +324,11 @@ func TestBot_GetUserProfilePhotos(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBot_GetFile(t *testing.T) {
+	res, err := bot.GetFile(photoId)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Get file fail and get err=%+v", err))
+		t.Fail()
+	}
+}

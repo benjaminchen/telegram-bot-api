@@ -266,3 +266,9 @@ func (bot *Bot) GetUserProfilePhotos(payload *GetUserProfilePhotosPayload) (res 
 	values := payload.BuildQuery()
 	return bot.Request("getUserProfilePhotos", values)
 }
+
+func (bot *Bot) GetFile(fileId string) (res Response, err error) {
+	uv := url.Values{}
+	uv.Set("file_id", fileId)
+	return bot.Request("getFile", uv)
+}
