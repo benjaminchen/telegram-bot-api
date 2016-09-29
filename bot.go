@@ -261,3 +261,8 @@ func (bot *Bot) SendChatAction(payload *SendChatActionPayload) (res Response, er
 	values := payload.BuildQuery()
 	return bot.Request("sendChatAction", values)
 }
+
+func (bot *Bot) GetUserProfilePhotos(payload *GetUserProfilePhotosPayload) (res Response, err error) {
+	values := payload.BuildQuery()
+	return bot.Request("getUserProfilePhotos", values)
+}

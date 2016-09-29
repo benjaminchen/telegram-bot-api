@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 	"testing"
+	"strconv"
 	"net/http"
 	"encoding/json"
 )
@@ -307,6 +308,19 @@ func TestBot_SendChatAction(t *testing.T) {
 	res, err := bot.SendChatAction(payload)
 	if !res.Ok {
 		t.Error(fmt.Sprint("Send contact fail and get err=%+v", err))
+		t.Fail()
+	}
+}
+
+func TestBot_GetUserProfilePhotos(t *testing.T) {
+	uid, _ := strconv.Atoi(chatId)
+	payload := &GetUserProfilePhotosPayload{
+		UserId: uid,
+	}
+
+	res, err := bot.GetUserProfilePhotos(payload)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Get user profile photos fail and get err=%+v", err))
 		t.Fail()
 	}
 }

@@ -201,3 +201,13 @@ type SendChatActionPayload struct {
 func (payload *SendChatActionPayload) BuildQuery() (url.Values) {
 	return payloadToUrlValues(*payload)
 }
+
+type GetUserProfilePhotosPayload struct {
+	UserId	int	`json:"user_id"`
+	Offset	int	`json:"offset"`
+	Limit	int	`json:"limit"`
+}
+
+func (payload *GetUserProfilePhotosPayload) BuildQuery() (url.Values) {
+	return payloadToUrlValues(*payload)
+}
