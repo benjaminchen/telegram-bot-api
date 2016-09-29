@@ -272,3 +272,10 @@ func (bot *Bot) GetFile(fileId string) (res Response, err error) {
 	uv.Set("file_id", fileId)
 	return bot.Request("getFile", uv)
 }
+
+func (bot *Bot) KickChatMember(chatId string, userId string) (res Response, err error) {
+	uv := url.Values{}
+	uv.Set("chat_id", chatId)
+	uv.Set("user_id", userId)
+	return bot.Request("kickChatMember", uv)
+}

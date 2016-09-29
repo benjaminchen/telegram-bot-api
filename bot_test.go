@@ -11,19 +11,23 @@ import (
 )
 
 var (
-	token	string
-	client	*http.Client
-	bot	*Bot
-	chatId	string
-	fromId	string
-	mId	int
-	photoId	string
+	token		string
+	client		*http.Client
+	bot		*Bot
+	chatId		string
+	publicChatId	string
+	fromId		string
+	kickUserId	string
+	mId		int
+	photoId		string
 )
 
 type Config struct {
 	Token			string
 	ChatId			string
+	PublicChatId		string
 	FromChatId		string
+	KickUserId		string
 	ForwardMessageId	int
 	PhotoId			string
 	HttpClientTimeout	int
@@ -52,6 +56,8 @@ func init() {
 	timeout := config.HttpClientTimeout
 	mId = config.ForwardMessageId
 	photoId = config.PhotoId
+	publicChatId = config.PublicChatId
+	kickUserId = config.KickUserId
 
 
 	client = &http.Client{
@@ -329,6 +335,14 @@ func TestBot_GetFile(t *testing.T) {
 	res, err := bot.GetFile(photoId)
 	if !res.Ok {
 		t.Error(fmt.Sprint("Get file fail and get err=%+v", err))
+		t.Fail()
+	}
+}
+
+func TestBot_KickChatMember(t *testing.T) {
+	res, err := bot.KickChatMember(publicChatId, kickUserId)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Kick chat member fail and get err=%+v", err))
 		t.Fail()
 	}
 }
