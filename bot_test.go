@@ -386,3 +386,11 @@ func TestBot_GetChatMembersCount(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBot_GetChatMember(t *testing.T) {
+	res, err := bot.GetChatMember(publicChatId, chatId)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Get chat member fail and get err=%+v", err))
+		t.Fail()
+	}
+}

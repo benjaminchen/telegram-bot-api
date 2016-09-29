@@ -310,3 +310,10 @@ func (bot *Bot) GetChatMembersCount(chatId string) (res Response, err error) {
 	uv.Set("chat_id", chatId)
 	return bot.Request("getChatMembersCount", uv)
 }
+
+func (bot *Bot) GetChatMember(chatId string, userId string) (res Response, err error) {
+	uv := url.Values{}
+	uv.Set("chat_id", chatId)
+	uv.Set("user_id", userId)
+	return bot.Request("getChatMember", uv)
+}
