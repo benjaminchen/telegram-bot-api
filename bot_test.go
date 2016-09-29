@@ -346,3 +346,11 @@ func TestBot_KickChatMember(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBot_LeaveChat(t *testing.T) {
+	res, err := bot.LeaveChat(publicChatId)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Leave chat fail and get err=%+v", err))
+		t.Fail()
+	}
+}

@@ -279,3 +279,9 @@ func (bot *Bot) KickChatMember(chatId string, userId string) (res Response, err 
 	uv.Set("user_id", userId)
 	return bot.Request("kickChatMember", uv)
 }
+
+func (bot *Bot) LeaveChat(chatId string) (res Response, err error) {
+	uv := url.Values{}
+	uv.Set("chat_id", chatId)
+	return bot.Request("leaveChat", uv)
+}
