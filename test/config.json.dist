@@ -1,7 +1,9 @@
 {
     "Token": "your-bot-token",
     "ChatId": "chat-id",
+    "PublicChatId": "public-chat-id",
     "FromChatId": "from-chat-id",
+    "KickUserId": "kick-unband-user-id",
     "ForwardMessageId": forward-message-id,
     "PhotoId": "photo-file_id",
     "HttpClientTimeout": timeout-seconds
