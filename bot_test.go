@@ -354,3 +354,11 @@ func TestBot_LeaveChat(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBot_UnbanChatMember(t *testing.T) {
+	res, err := bot.UnbanChatMember(publicChatId, kickUserId)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Unban chat member fail and get err=%+v", err))
+		t.Fail()
+	}
+}
