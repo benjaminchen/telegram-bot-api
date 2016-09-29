@@ -370,3 +370,11 @@ func TestBot_GetChat(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBot_GetChatAdministrators(t *testing.T) {
+	res, err := bot.GetChatAdministrators(publicChatId)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Get chat administrators fail and get err=%+v", err))
+		t.Fail()
+	}
+}

@@ -298,3 +298,9 @@ func (bot *Bot) GetChat(chatId string) (res Response, err error) {
 	uv.Set("chat_id", chatId)
 	return bot.Request("getChat", uv)
 }
+
+func (bot *Bot) GetChatAdministrators(chatId string) (res Response, err error) {
+	uv := url.Values{}
+	uv.Set("chat_id", chatId)
+	return bot.Request("getChatAdministrators", uv)
+}
