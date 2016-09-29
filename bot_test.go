@@ -362,3 +362,11 @@ func TestBot_UnbanChatMember(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestBot_GetChat(t *testing.T) {
+	res, err := bot.GetChat(publicChatId)
+	if !res.Ok {
+		t.Error(fmt.Sprint("Get chat fail and get err=%+v", err))
+		t.Fail()
+	}
+}

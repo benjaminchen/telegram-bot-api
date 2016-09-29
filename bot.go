@@ -292,3 +292,9 @@ func (bot *Bot) UnbanChatMember(chatId string, userId string) (res Response, err
 	uv.Set("user_id", userId)
 	return bot.Request("unbanChatMember", uv)
 }
+
+func (bot *Bot) GetChat(chatId string) (res Response, err error) {
+	uv := url.Values{}
+	uv.Set("chat_id", chatId)
+	return bot.Request("getChat", uv)
+}
