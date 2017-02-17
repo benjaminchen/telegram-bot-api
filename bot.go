@@ -1,46 +1,27 @@
 package tgbot
 
 import (
-	"os"
-	"fmt"
 	"bytes"
+	"encoding/json"
 	"errors"
-	"strconv"
+	"fmt"
 	"io/ioutil"
+	"log"
+	"mime/multipart"
 	"net/http"
 	"net/url"
-	"encoding/json"
-	"mime/multipart"
+	"os"
+	"time"
 )
 
 type Bot struct {
-	Url	string
-	Me	*User
-	Client	*http.Client
-}
-
-func NewBot(token string, client *http.Client) (bot *Bot, err error) {
-	if token == "" {
-		err = errors.New("Invalid token")
-		return
-	}
-
-	bot = &Bot{
-		Url: "https://api.telegram.org/bot" + token,
-		Client: client,
-	}
-	self, err := bot.GetMe()
-	if err != nil {
-		return &Bot{}, err
-	}
-
-	bot.Me = &self
-
-	return
+	Url    string
+	Me     *User
+	Client *http.Client
 }
 
 func (bot *Bot) Request(api string, params url.Values) (response Response, err error) {
-	res, err := bot.Client.PostForm(bot.Url + "/" + api, params)
+	res, err := bot.Client.PostForm(bot.Url+"/"+api, params)
 	if err != nil {
 		return
 	}
@@ -99,7 +80,7 @@ func (bot *Bot) Upload(api string, fileParamName string, filePath string, params
 		return
 	}
 
-	res, err := bot.Client.Post(bot.Url + "/" + api, bodyWriter.FormDataContentType(), bodyBuf)
+	res, err := bot.Client.Post(bot.Url+"/"+api, bodyWriter.FormDataContentType(), bodyBuf)
 	if err != nil {
 		return
 	}
@@ -119,12 +100,34 @@ func (bot *Bot) Upload(api string, fileParamName string, filePath string, params
 	return
 }
 
-func (bot *Bot) GetUpdates(limit int, timeout int) (updates []Update, err error) {
-	uv := url.Values{}
-	uv.Set("limit", strconv.Itoa(limit))
-	uv.Set("timeout", strconv.Itoa(timeout))
+func (bot *Bot) GetUpdatesChannel(payload *GetUpdatesPayload) <-chan Update {
+	ch := make(chan Update)
 
-	res, err := bot.Request("getUpdates", uv)
+	go func() {
+		for {
+			updates, err := bot.GetUpdates(payload)
+			if err != nil {
+				log.Println(err)
+				log.Println("Failed to get updates, retry in 3 seconds...")
+				time.Sleep(time.Second * 3)
+				continue
+			}
+
+			for _, update := range updates {
+				if update.UpdateId >= payload.Offset {
+					payload.Offset = update.UpdateId + 1
+					ch <- update
+				}
+			}
+		}
+	}()
+
+	return ch
+}
+
+func (bot *Bot) GetUpdates(payload *GetUpdatesPayload) (updates []Update, err error) {
+	values := payload.BuildQuery()
+	res, err := bot.Request("getUpdates", values)
 	if err != nil {
 		return
 	}
@@ -135,20 +138,29 @@ func (bot *Bot) GetUpdates(limit int, timeout int) (updates []Update, err error)
 }
 
 func (bot *Bot) SetWebhook(payload *SetWebhookPayload) (res Response, err error) {
-	uv := url.Values{}
-	uv.Set("url", payload.Url)
+	uv := payload.BuildQuery()
 	path := payload.CertificateFilePath
 	if path == "" {
 		res, err = bot.Request("setWebhook", uv)
-		return
+	} else {
+		res, err = bot.Upload("setWebhook", "certificate", path, uv)
 	}
 
-	res, err = bot.Upload("setWebhook", "certificate", path, uv)
 	return
 }
 
-func (bot *Bot) RemoveWebhook() (res Response, err error) {
-	return bot.Request("setWebhook", url.Values{})
+func (bot *Bot) DeleteWebhook() (res Response, err error) {
+	return bot.Request("deleteWebhook", nil)
+}
+
+func (bot *Bot) GetWebhookInfo() (info WebhookInfo, err error) {
+	res, err := bot.Request("getWebhookInfo", nil)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(res.Result, &info)
+	return
 }
 
 func (bot *Bot) GetMe() (me User, err error) {
@@ -157,8 +169,7 @@ func (bot *Bot) GetMe() (me User, err error) {
 		return
 	}
 
-	json.Unmarshal(res.Result, &me)
-
+	err = json.Unmarshal(res.Result, &me)
 	return
 }
 
@@ -174,7 +185,7 @@ func (bot *Bot) ForwardMessage(payload *ForwardMessagePayload) (res Response, er
 
 func (bot *Bot) SendPhoto(payload *SendPhotoPayload) (res Response, err error) {
 	values := payload.BuildQuery()
-	if payload.FileId != "" {
+	if payload.FilePath == "" {
 		res, err = bot.Request("sendPhoto", values)
 	} else {
 		res, err = bot.Upload("sendPhoto", "photo", payload.FilePath, values)
@@ -186,7 +197,7 @@ func (bot *Bot) SendPhoto(payload *SendPhotoPayload) (res Response, err error) {
 // support .mp3 file to display
 func (bot *Bot) SendAudio(payload *SendAudioPayload) (res Response, err error) {
 	values := payload.BuildQuery()
-	if payload.FileId != "" {
+	if payload.FilePath == "" {
 		res, err = bot.Request("sendAudio", values)
 	} else {
 		res, err = bot.Upload("sendAudio", "audio", payload.FilePath, values)
@@ -197,7 +208,7 @@ func (bot *Bot) SendAudio(payload *SendAudioPayload) (res Response, err error) {
 
 func (bot *Bot) SendDocument(payload *SendDocumentPayload) (res Response, err error) {
 	values := payload.BuildQuery()
-	if payload.FileId != "" {
+	if payload.FilePath == "" {
 		res, err = bot.Request("sendDocument", values)
 	} else {
 		res, err = bot.Upload("sendDocument", "document", payload.FilePath, values)
@@ -209,7 +220,7 @@ func (bot *Bot) SendDocument(payload *SendDocumentPayload) (res Response, err er
 // .webp file
 func (bot *Bot) SendSticker(payload *SendStickerPayload) (res Response, err error) {
 	values := payload.BuildQuery()
-	if payload.FileId != "" {
+	if payload.FilePath == "" {
 		res, err = bot.Request("sendSticker", values)
 	} else {
 		res, err = bot.Upload("sendSticker", "sticker", payload.FilePath, values)
@@ -221,7 +232,7 @@ func (bot *Bot) SendSticker(payload *SendStickerPayload) (res Response, err erro
 // .mp4 file
 func (bot *Bot) SendVideo(payload *SendVideoPayload) (res Response, err error) {
 	values := payload.BuildQuery()
-	if payload.FileId != "" {
+	if payload.FilePath == "" {
 		res, err = bot.Request("sendVideo", values)
 	} else {
 		res, err = bot.Upload("sendVideo", "video", payload.FilePath, values)
@@ -233,7 +244,7 @@ func (bot *Bot) SendVideo(payload *SendVideoPayload) (res Response, err error) {
 // .ogg file
 func (bot *Bot) SendVoice(payload *SendVoicePayload) (res Response, err error) {
 	values := payload.BuildQuery()
-	if payload.FileId != "" {
+	if payload.FilePath == "" {
 		res, err = bot.Request("sendVoice", values)
 	} else {
 		res, err = bot.Upload("sendVoice", "voice", payload.FilePath, values)
@@ -262,15 +273,27 @@ func (bot *Bot) SendChatAction(payload *SendChatActionPayload) (res Response, er
 	return bot.Request("sendChatAction", values)
 }
 
-func (bot *Bot) GetUserProfilePhotos(payload *GetUserProfilePhotosPayload) (res Response, err error) {
+func (bot *Bot) GetUserProfilePhotos(payload *GetUserProfilePhotosPayload) (photos UserProfilePhotos, err error) {
 	values := payload.BuildQuery()
-	return bot.Request("getUserProfilePhotos", values)
+	res, err := bot.Request("getUserProfilePhotos", values)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(res.Result, &photos)
+	return
 }
 
-func (bot *Bot) GetFile(fileId string) (res Response, err error) {
+func (bot *Bot) GetFile(fileId string) (file File, err error) {
 	uv := url.Values{}
 	uv.Set("file_id", fileId)
-	return bot.Request("getFile", uv)
+	res, err := bot.Request("getFile", uv)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(res.Result, &file)
+	return
 }
 
 func (bot *Bot) KickChatMember(chatId string, userId string) (res Response, err error) {
@@ -293,27 +316,56 @@ func (bot *Bot) UnbanChatMember(chatId string, userId string) (res Response, err
 	return bot.Request("unbanChatMember", uv)
 }
 
-func (bot *Bot) GetChat(chatId string) (res Response, err error) {
+func (bot *Bot) GetChat(chatId string) (chat Chat, err error) {
 	uv := url.Values{}
 	uv.Set("chat_id", chatId)
-	return bot.Request("getChat", uv)
+	res, err := bot.Request("getChat", uv)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(res.Result, &chat)
+	return
 }
 
-func (bot *Bot) GetChatAdministrators(chatId string) (res Response, err error) {
+func (bot *Bot) GetChatAdministrators(chatId string) (admins []ChatMember, err error) {
 	uv := url.Values{}
 	uv.Set("chat_id", chatId)
-	return bot.Request("getChatAdministrators", uv)
+	res, err := bot.Request("getChatAdministrators", uv)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(res.Result, &admins)
+	return
 }
 
-func (bot *Bot) GetChatMembersCount(chatId string) (res Response, err error) {
+func (bot *Bot) GetChatMembersCount(chatId string) (num int, err error) {
 	uv := url.Values{}
 	uv.Set("chat_id", chatId)
-	return bot.Request("getChatMembersCount", uv)
+	res, err := bot.Request("getChatMembersCount", uv)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(res.Result, &num)
+	return
 }
 
-func (bot *Bot) GetChatMember(chatId string, userId string) (res Response, err error) {
+func (bot *Bot) GetChatMember(chatId string, userId string) (member ChatMember, err error) {
 	uv := url.Values{}
 	uv.Set("chat_id", chatId)
 	uv.Set("user_id", userId)
-	return bot.Request("getChatMember", uv)
+	res, err := bot.Request("getChatMember", uv)
+	if err != nil {
+		return
+	}
+
+	err = json.Unmarshal(res.Result, &member)
+	return
+}
+
+func (bot *Bot) AnswerCallbackQuery(payload *AnswerCallbackQueryPayload) (res Response, err error) {
+	values := payload.BuildQuery()
+	return bot.Request("answerCallbackQuery", values)
 }
