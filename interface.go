@@ -26,10 +26,10 @@ type BotApi interface {
 	GetUserProfilePhotos(payload *GetUserProfilePhotosPayload) (photos UserProfilePhotos, err error)
 	GetFile(fileId string) (file File, err error)
 	LeaveChat(chatId string) (res Response, err error)
-	// todo need test
-	AnswerCallbackQuery(payload *AnswerCallbackQueryPayload) (res Response, err error)
 	EditMessageText(payload *EditMessageTextPayload) (res Response, err error)
 	EditMessageCaption(payload *EditMessageCaptionPayload) (res Response, err error)
+	// todo need test
+	AnswerCallbackQuery(payload *AnswerCallbackQueryPayload) (res Response, err error)
 	EditMessageReplyMarkup(payload *EditMessageReplyMarkupPayload) (res Response, err error)
 	AnswerInlineQuery(payload *AnswerInlineQueryPayload) (res Response, err error)
 	SendGame(payload *SendGamePayload) (res Response, err error)
