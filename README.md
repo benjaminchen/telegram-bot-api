@@ -1,5 +1,7 @@
 # Telegram Bot API (Golang)
 
+[![Build Status](https://travis-ci.org/benjaminchen/telegram-bot-api.svg?branch=master)](https://travis-ci.org/benjaminchen/telegram-bot-api)
+
 This package is for supporting Telegram api in Golang. 
 All methods base on [Telegram Bot API](https://core.telegram.org/bots/api) webpage. 
 If you find anything not matching the official site of Telegram Bot API. Please open a issue. 

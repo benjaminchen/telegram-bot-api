@@ -25,44 +25,48 @@ var (
 )
 
 type Config struct {
-	Token             string
-	ChatId            string
-	PublicChatId      string
-	FromChatId        string
-	KickUserId        string
-	ForwardMessageId  int
-	PhotoId           string
-	HttpClientTimeout int
+	Token            string
+	ChatId           string
+	PublicChatId     string
+	FromChatId       string
+	KickUserId       string
+	ForwardMessageId string
+	PhotoId          string
+}
+
+func getenv(key, fallback string) string {
+	v := os.Getenv(key)
+	if len(key) == 0 {
+		return fallback
+	}
+
+	return v
 }
 
 func init() {
 	var err error
+	config := Config{}
 
 	file, err := os.Open("test/config.json")
-	if err != nil {
-		fmt.Printf("Can't open config file and get err=%+v\n", err)
-		os.Exit(1)
+	if err == nil {
+		decoder := json.NewDecoder(file)
+		err = decoder.Decode(&config)
+		if err != nil {
+			fmt.Printf("Decode config fail and get err=%+v\n", err)
+			os.Exit(1)
+		}
 	}
 
-	decoder := json.NewDecoder(file)
-	config := Config{}
-	err = decoder.Decode(&config)
-	if err != nil {
-		fmt.Printf("Decode config fail and get err=%+v\n", err)
-		os.Exit(1)
-	}
-
-	token = config.Token
-	chatId = config.ChatId
-	fromId = config.FromChatId
-	timeout := config.HttpClientTimeout
-	mId = config.ForwardMessageId
-	photoId = config.PhotoId
-	publicChatId = config.PublicChatId
-	kickUserId = config.KickUserId
+	token = getenv("token", config.Token)
+	chatId = getenv("chat_id", config.ChatId)
+	fromId = getenv("from_id", config.FromChatId)
+	mId, _ = strconv.Atoi(getenv("m_id", config.ForwardMessageId))
+	photoId = getenv("photo_id", config.PhotoId)
+	publicChatId = getenv("public_chat_id", config.PublicChatId)
+	kickUserId = getenv("kick_user_id", config.KickUserId)
 
 	client = &http.Client{
-		Timeout: time.Duration(timeout) * time.Second,
+		Timeout: time.Duration(10) * time.Second,
 	}
 
 	bot, err = NewBotApi(token, client)
